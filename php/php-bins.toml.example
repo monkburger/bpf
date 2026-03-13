@@ -1,0 +1,31 @@
+# php-bins.toml
+#
+# List the PHP binaries you want php_latency_monitor.py to watch.
+# Copy this file, edit it for your setup, then pass it with --config.
+#
+#   sudo python3 php_latency_monitor.py --config php-bins.toml
+#
+# "kind" must be one of: fpm, cgi, cli
+# "version" is just an integer label that shows up in the output column.
+#   Use whatever makes sense for your setup (81 for PHP 8.1, etc).
+
+[[binary]]
+path    = "/usr/sbin/php-fpm"
+kind    = "fpm"
+version = 83
+
+[[binary]]
+path    = "/usr/bin/php-cgi"
+kind    = "cgi"
+version = 83
+
+[[binary]]
+path    = "/usr/bin/php"
+kind    = "cli"
+version = 83
+
+# Vanilla system PHP example:
+# [[binary]]
+# path    = "/usr/bin/php"
+# kind    = "cli"
+# version = 83
