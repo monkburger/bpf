@@ -53,6 +53,39 @@ See [php/README.md](php/README.md) for full usage, use cases, and examples.
 
 ---
 
+### `nginx/nginx_upstream_latency.py` *(BETA)*
+
+> This tool is BETA and might not work correctly on all builds.  One struct
+> offset (`U_OFF_STATE = 0x420`) is hard-coded from a disassembly of a
+> specific nginx build and may be wrong on a different version or package.
+
+Traces nginx upstream request latency in real time using BCC uprobes. Hooks
+directly into the nginx binary with no config changes and no restarts required.
+Covers all nginx worker processes at once.
+
+Attaches two uprobes:
+
+- **`ngx_http_upstream_connect`**: records a BPF timestamp on every upstream
+  attempt, including retries.
+- **`ngx_http_upstream_finalize_request`**: computes wall-clock latency, reads
+  nginx's own per-request timing (`connect_time`, `header_time`,
+  `bytes_received`) and the upstream peer name from `u->state`, then emits an
+  event to user space.
+
+Prints a live event table with columns for total latency, TCP connect time,
+time to first byte, bytes received, and HTTP status. On exit (or at a
+configurable interval) prints a per-peer summary with min/avg/max and an ASCII
+latency histogram.
+
+Keepalive note: for reused keepalive connections, the CONNECT column will show
+0. This is expected -- there was no TCP handshake. The TOTAL column is still
+accurate.
+
+See [nginx/README.md](nginx/README.md) for full usage, flags, and known
+limitations.
+
+---
+
 ### `mysql/mysql_query_log_bpf.py`
 
 Captures live MySQL query text and execution time by attaching a uprobe to
